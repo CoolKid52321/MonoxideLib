@@ -1,9 +1,18 @@
 -- MONOXIDE UI LIB BETA 0.1 - DO NOT SHARE WITH ANYONE WHO IS NOT A BETA TESTER.
 
---local CoreGui = game:GetService("CoreGui")
---if CoreGui:FindFirstChild("MonoxideLib") then
---    CoreGui:FindFirstChild("MonoxideLib"):Destroy()
---end
+getgenv().MonoxideWindows = {}
+local CoreGui = game:GetService("CoreGui")
+if not MonoxideWindows then
+    MonoxideWindows = {}
+end
+
+for i,v in next, MonoxideWindows do
+    if CoreGui:FindFirstChild("MonoxideLib"):FindFirstChild(v) then
+        CoreGui:FindFirstChild("MonoxideLib"):FindFirstChild(v):Destroy()
+    end
+end
+
+
 -- Instances:
 local function ripple(obj)
 	spawn(
@@ -45,7 +54,7 @@ local function ripple(obj)
 	)
 end
 
-local ScreenGui = Instance.new("ScreenGui")
+local ScreenGui = CoreGui:FindFirstChild("MonoxideLib") or Instance.new("ScreenGui")
 
 --Properties:
 ScreenGui.Name = "MonoxideLib"
@@ -134,6 +143,8 @@ function lib:Window(title, ver,font, outcolor)
     local Window = Instance.new("Frame")
     local Topbar = Instance.new("Frame")
     Outline.Name = string.lower(title)
+    table.insert(MonoxideWindows, string.lower(title))
+    local current = table.getn(MonoxideWindows)
     local RNG = Random.new()
     local RNG2 = Random.new()
     Outline.Parent = ScreenGui
@@ -181,7 +192,7 @@ function lib:Window(title, ver,font, outcolor)
     ExitButton.Size = UDim2.new(0,10,0,10)
     ExitButton.TextColor3 = Color3.fromRGB(199, 199, 199)
     ExitButton.MouseButton1Down:Connect(function()
-        print("test")
+        table.remove(MonoxideWindows, current)
         Outline:TweenSize(
         UDim2.new(0, 0, 0, 0),
             Enum.EasingDirection.Out,
@@ -304,7 +315,7 @@ function lib:Window(title, ver,font, outcolor)
     function window:GetWindow()
         return Window
     end
-    function window:Dropdown(text, list, callback)
+    function window:Dropdown(text, list, callback) -- Based on dawid's Vape lib (soon i'll make a new one)
             local droptog = false
             local framesize = 0
             local itemcount = 0
@@ -483,7 +494,7 @@ function lib:Window(title, ver,font, outcolor)
 
 
     -- New Textbox
-    function window:Textbox(text, disapeer, callback)
+    function window:Textbox(text, disapeer, callback) -- Based on dawid's Vape lib (soon i'll make a new one)
         callback = callback or function(...)
         end
         local textbox = Instance.new("Frame")
@@ -544,7 +555,7 @@ function lib:Window(title, ver,font, outcolor)
             end
         )
     end
-    function window:Slider(text, min, max, start, callback)
+    function window:Slider(text, min, max, start, callback) -- Based on dawid's Vape lib (soon i'll make a new one)
         local inputService = game:GetService("UserInputService")
         local slider = Instance.new("Frame")
         local round = Instance.new("UICorner")
@@ -701,4 +712,4 @@ function lib:Window(title, ver,font, outcolor)
     return window;
 end
 
-return lib
+return lib -- Return the lib so it can be used with loadstring()
